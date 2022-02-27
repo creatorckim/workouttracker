@@ -260,12 +260,11 @@ function ExListScreen() {
                         </Picker>
                         <TouchableOpacity 
                             onPress={() => {
-                                updateExercise(exerciseId, exerciseName, muscleName, equipmentName);
-                                // if (exerciseId == 0) {
-                                //     addToDB(exerciseName, muscleName, equipmentName); 
-                                // } else {
-                                //     updateExercise(exerciseName, muscleName, equipmentName, exerciseId);
-                                // }
+                                if (exerciseId == 0) {
+                                    addToDB(exerciseName, muscleName, equipmentName); 
+                                } else {
+                                    updateExercise(exerciseId, exerciseName, muscleName, equipmentName);
+                                }
                                 setModalVisible(!modalVisible);
                             }}>
                             <Text>Save</Text>

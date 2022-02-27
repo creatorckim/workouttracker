@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './components/HomeScreen';
 import ExListScreen from './components/ExListScreen';
+import NoteScreen from './components/NoteScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -10,9 +11,10 @@ export default function App() {
   return (
     <NavigationContainer style={styles.container}>
       <Stack.Navigator initialRouteName='Routine'>
-        <Stack.Screen name='Routine' component={HomeScreen} options={({navigation}) => ({ headerStyle: {backgroundColor: '#fff'},  headerRight: () => ( <TouchableOpacity style={styles.exListBtn} onPress={() => {navigation.navigate('Exercise List')}}></TouchableOpacity>
+        <Stack.Screen name='Routine' component={HomeScreen} options={({navigation}) => ({ headerStyle: {backgroundColor: '#fff'},  headerRight: () => ( <TouchableOpacity style={styles.exListBtn} onPress={() => {navigation.navigate('Notes')}}></TouchableOpacity>
         )})}/>
         <Stack.Screen name='Exercise List' component={ExListScreen}/>
+        <Stack.Screen name='Notes' component={NoteScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
