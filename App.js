@@ -22,14 +22,10 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    // flex: 1,
-    // backgroundColor: '#fff',
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   exListBtn: {
-    width: 50,
-    height: 50,
-    backgroundColor: '#08964F',
+    width: 40,
+    height: 40,
+    backgroundColor: '#000',
   }
 });
