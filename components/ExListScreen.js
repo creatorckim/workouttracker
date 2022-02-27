@@ -12,6 +12,8 @@ function ExListScreen() {
     const [muscleName, setMuscleName] = useState('');
     const [equipmentName, setEquipmentName] = useState('');
     const [exerciseList, setExerciseList] = useState([]);
+    const [muscleFilter, setMuscleFilter] = useState('All');
+    const [equipmentFilter, setEquipmentFilter] = useState('All');
 
     useEffect(() => {
         // db.transaction(transaction => {
@@ -48,8 +50,90 @@ function ExListScreen() {
         });
       };
 
+      const filterDB = (muscle, equipment) => {
+        if (muscle == 'All' && equipment == 'All') {
+            db.transaction((tx) => {
+                tx.executeSql("select * from exercises", [], (_, { rows: { _array } }) => {
+                    let temp = [];
+                    for (let i = 0; i < _array.length; ++i) {
+                        temp.push(_array[i]);
+                    }
+                    setExerciseList(temp);
+                });
+            });
+        } else if (muscle == 'All' && equipment != 'All') {
+            db.transaction((tx) => {
+                tx.executeSql("select * from exercises where equipment = ?", [equipment], (_, { rows: { _array } }) => {
+                    let temp = [];
+                    for (let i = 0; i < _array.length; ++i) {
+                        temp.push(_array[i]);
+                    }
+                    setExerciseList(temp);
+                });
+            });
+        } else if (muscle != 'All' && equipment == 'All') {
+            db.transaction((tx) => {
+                tx.executeSql("select * from exercises where muscle = ?", [muscle], (_, { rows: { _array } }) => {
+                    let temp = [];
+                    for (let i = 0; i < _array.length; ++i) {
+                        temp.push(_array[i]);
+                    }
+                    setExerciseList(temp);
+                });
+            });
+        } else {
+            db.transaction((tx) => {
+                tx.executeSql("select * from exercises where muscle = ? and equipment = ?", [muscle, equipment], (_, { rows: { _array } }) => {
+                    let temp = [];
+                    for (let i = 0; i < _array.length; ++i) {
+                        temp.push(_array[i]);
+                    }
+                    setExerciseList(temp);
+                });
+            });
+        }
+
+      }
+
     return (
         <View style={styles.container}>
+            <View>
+                <Picker selectedValue={muscleFilter} onValueChange={(itemValue, itemIndex) => setMuscleFilter(itemValue)}>
+                    <Picker.Item label='All' value='All' />
+                    <Picker.Item label='Trapezius' value='Trapezius'/>
+                    <Picker.Item label='Latissimus Dorsi' value='Latissimus Dorsi'/>
+                    <Picker.Item label='Bicep' value='Bicep'/>
+                    <Picker.Item label='Forearms' value='Forearms'/>
+                    <Picker.Item label='Upper Chest' value='Upper Chest'/>
+                    <Picker.Item label='Chest' value='Chest'/>
+                    <Picker.Item label='Tricep' value='Tricep'/>
+                    <Picker.Item label='Anterior Deltoid' value='Anterior Deltoid'/>
+                    <Picker.Item label='Lateral Deltoid' value='Lateral Deltoid'/>
+                    <Picker.Item label='Posterior Deltoid' value='Posterior Deltoid'/>
+                    <Picker.Item label='Quadricep' value='Quadricep'/>
+                    <Picker.Item label='Abductor' value='Abductor'/>
+                    <Picker.Item label='Adductor' value='Adductor'/>
+                    <Picker.Item label='Hamstring' value='Hamstring'/>
+                    <Picker.Item label='Glute' value='Glute'/>
+                    <Picker.Item label='Calf' value='Calf'/>
+                    <Picker.Item label='Erector Spinae' value='Erector Spinae'/>
+                    <Picker.Item label='Oblique' value='Oblique'/>
+                    <Picker.Item label='Rectus Abdominis (Spinal Flexion)' value='Rectus Abdominis (Spinal Flexion)'/>
+                    <Picker.Item label='Rectus Abdominis (Hip Flexion)' value='Rectus Abdominis (Hip Flexion)'/>
+                    <Picker.Item label='Heart' value='Heart'/>
+                </Picker>
+                <Picker selectedValue={equipmentFilter} onValueChange={(itemValue, itemIndex) => setEquipmentFilter(itemValue)}>
+                    <Picker.Item label='All' value="All" />
+                    <Picker.Item label='Dumbbells' value='Dumbbells'/>
+                    <Picker.Item label='Barbell' value='Barbell'/>
+                    <Picker.Item label='Machine' value='Machine'/>
+                    <Picker.Item label='Bands' value='Bands'/>
+                    <Picker.Item label='Pullup Bar' value='Pullup Bar'/>
+                </Picker>
+                <TouchableOpacity onPress={() => filterDB(muscleFilter, equipmentFilter)}>
+                    <Text>Filter</Text>
+                </TouchableOpacity>
+            </View>
             {exerciseList.length != 0 ? 
                 <ScrollView style={styles.listContainer}>
                     {exerciseList.map((exercise) => 
@@ -59,7 +143,7 @@ function ExListScreen() {
                             <Text>Equipment: {exercise.equipment}</Text>
                         </View>
                     )}
-                </ScrollView> : <Text>Null</Text>
+                </ScrollView> : <Text>No Exercises</Text>
             }
              <View style={styles.actionBarContainer}>
                 <TouchableOpacity onPress={() => setModalVisible(true)}>
