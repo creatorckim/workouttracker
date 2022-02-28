@@ -8,10 +8,16 @@ import NoteScreen from './components/NoteScreen';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
   return (
     <NavigationContainer style={styles.container}>
       <Stack.Navigator initialRouteName='Routine'>
-        <Stack.Screen name='Routine' component={HomeScreen} options={({navigation}) => ({ headerStyle: {backgroundColor: '#fff'},  headerRight: () => ( <TouchableOpacity style={styles.exListBtn} onPress={() => {navigation.navigate('Notes')}}></TouchableOpacity>
+        <Stack.Screen name='Routine' component={HomeScreen} options={({navigation}) => ({ headerStyle: {backgroundColor: '#fff'},  
+          headerRight: () => ( 
+            <View style={styles.statusBtnContainer}>
+              <TouchableOpacity style={styles.exListBtn} onPress={() => {navigation.navigate('Exercise List')}}></TouchableOpacity>
+              <TouchableOpacity style={styles.noteBtn} onPress={() => {navigation.navigate('Notes')}}></TouchableOpacity>
+            </View>
         )})}/>
         <Stack.Screen name='Exercise List' component={ExListScreen}/>
         <Stack.Screen name='Notes' component={NoteScreen}/>
@@ -25,9 +31,19 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  statusBtnContainer: {
+    flexDirection: 'row',
+  },
   exListBtn: {
     width: 40,
     height: 40,
     backgroundColor: '#000',
+    margin: 10,
+  },
+  noteBtn: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#af216e',
+    margin: 10,
   }
 });

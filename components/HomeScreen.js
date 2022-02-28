@@ -5,6 +5,7 @@ import CalendarStrip from 'react-native-calendar-strip';
 function HomeScreen({navigation}) {
 
     const [ selectedDate, setSelectedDate ] = useState('');
+    
 
     return (
         <View>
