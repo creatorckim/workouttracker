@@ -15,7 +15,7 @@ export default function App() {
         <Stack.Screen name='Routine' component={HomeScreen} options={({navigation}) => ({ headerStyle: {backgroundColor: '#fff'},  
           headerRight: () => ( 
             <View style={styles.statusBtnContainer}>
-              <TouchableOpacity style={styles.exListBtn} onPress={() => {navigation.navigate('Exercise List')}}></TouchableOpacity>
+              <TouchableOpacity style={styles.exListBtn} onPress={() => {navigation.navigate({name: 'Exercise List', params: { toAdd : false },merge: true,})}}></TouchableOpacity>
               <TouchableOpacity style={styles.noteBtn} onPress={() => {navigation.navigate('Notes')}}></TouchableOpacity>
             </View>
         )})}/>

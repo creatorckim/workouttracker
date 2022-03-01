@@ -16,7 +16,7 @@ function NoteScreen({navigation}) {
                 "create table if not exists notes (id integer primary key not null, note text);"
             );
             tx.executeSql("select * from notes", [], (_, { rows: { _array } }) => {
-                console.log(_array)
+                // console.log(_array)
                 if (_array.length != 0) {
                     setNote(_array[0].note);
                     setId(_array[0].id);

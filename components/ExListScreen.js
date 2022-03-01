@@ -5,7 +5,7 @@ import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase('exercise-db');
 
-function ExListScreen() {
+function ExListScreen({navigation, route}) {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [deleteModalVisible, setdeleteModalVisible] = useState(false);
@@ -181,11 +181,16 @@ function ExListScreen() {
                     {exerciseList.map((exercise) =>
                         <TouchableOpacity key={exercise.id} style={styles.exerciseContainer} 
                             onPress={() => {
-                                setExerciseId(exercise.id);
-                                setExerciseName(exercise.name);
-                                setMuscleName(exercise.muscle);
-                                setEquipmentName(exercise.equipment);
-                                setModalVisible(true);
+                                if (route.params.toAdd) {
+                                    navigation.navigate({name: 'Routine', params: { name: exercise.name },merge: true,});
+                                } else {
+                                    setExerciseId(exercise.id);
+                                    setExerciseName(exercise.name);
+                                    setMuscleName(exercise.muscle);
+                                    setEquipmentName(exercise.equipment);
+                                    setModalVisible(true);
+                                }
+                                
                             }} 
                             onLongPress={() => {
                                 setExerciseId(exercise.id); 
