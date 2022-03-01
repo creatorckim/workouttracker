@@ -33,11 +33,17 @@ function HomeScreen({navigation, route}) {
     
         //   console.log(route.params?.name);
         //   addToRoutineArray(route.params?.name, route.params?.id);
-        addRoutine(route.params?.name, selectedDate, []);
+        addRoutine(route.params?.name, selectedDate, [[0,0], [0,0], [0,0]]);
     
         }
-    
     }, [route.params?.name]);
+
+    useEffect(() => {
+        if (route.params?.setArray) {
+            updateSetArray(route.params?.id, route.params?.setArray);
+        }
+
+    }, [route.params?.setArray]);
 
     // useEffect(() => {
     //     // console.log(route.params?.id)
@@ -70,10 +76,13 @@ function HomeScreen({navigation, route}) {
                     element.setarray = convertedArray;
                     temp.push(element);
                 }
+                // console.log(temp)
+
                 let initialData = temp.map((exercise) => {
                     return {
                         key: exercise.id,
                         label: exercise.name,
+                        array: exercise.setarray,
                     };
                 });
                 setRoutine(initialData);
@@ -83,7 +92,10 @@ function HomeScreen({navigation, route}) {
 
     const addRoutine = (name, date, setarray) => {
         // console.log(date)
+        // console.log('setArray ', setarray)
         let tempArray = convertArrayToString(setarray);
+        // console.log('temparray ', tempArray)
+
         db.transaction((tx) => {
             tx.executeSql("insert into routines (name, date, setarray) values (?, ?, ?)", [name, date, tempArray]);
             tx.executeSql("select * from routines where date = ?", [selectedDate], (_, { rows: { _array } }) => {
@@ -92,6 +104,7 @@ function HomeScreen({navigation, route}) {
                 for (let i = 0; i < _array.length; ++i) {
                     let element = _array[i];
                     let convertedArray = convertStringToArray(element.setarray);
+                    // console.log(convertedArray)
                     element.setarray = convertedArray;
                     temp.push(element);
                 }
@@ -99,6 +112,7 @@ function HomeScreen({navigation, route}) {
                     return {
                         key: exercise.id,
                         label: exercise.name,
+                        array: exercise.setarray,
                     };
                 });
                 // console.log('initialData');
@@ -124,6 +138,7 @@ function HomeScreen({navigation, route}) {
                     return {
                         key: exercise.id,
                         label: exercise.name,
+                        array: exercise.setarray,
                     };
                 });
                 // console.log(temp)
@@ -149,6 +164,7 @@ function HomeScreen({navigation, route}) {
                     return {
                         key: exercise.id,
                         label: exercise.name,
+                        array: exercise.setarray,
                     };
                 });
                 // console.log(temp)
@@ -159,21 +175,40 @@ function HomeScreen({navigation, route}) {
     };
 
     const convertArrayToString = (array) => {
-        let strSeparator = "__,__";
+        let strSeparator = "/";
         let str = "";
-        for (let i = 0;i<array.length; i++) {
-            str = str+array[i];
-            if(i<array.length-1){
-                str = str+strSeparator;
+        for (let i = 0; i < array.length; i++) {
+            let strsep = ",";
+            let str2 = "";
+            for (let x = 0; x <array[i].length; x++) {
+                str2 = str2 + array[i][x];
+                if(x < array[i].length - 1){
+                    str2 = str2 + strsep;
+                }
+            }
+            str = str + str2;
+            // str = str + array[i];
+            if(i < array.length - 1){
+                str = str + strSeparator;
             }
         }
+        // console.log(str);
         return str;
     }
 
     const convertStringToArray = (str) => {
-        let strSeparator = "__,__";
+        let strSeparator = "/";
         let arr = str.split(strSeparator);
-        return arr;
+
+        let newArray = [];
+        for (let i = 0; i < arr.length; i++) {
+            let strsep = ",";
+            let arr2 = arr[i].split(strsep);
+            // console.log(arr2)
+            newArray.push(arr2);
+        }
+        // console.log(newArray);
+        return newArray;
     }
 
     // const addToRoutineArray = (exercise) => {
@@ -209,7 +244,7 @@ function HomeScreen({navigation, route}) {
       const leftAction = (item) => {
         return <TouchableOpacity 
                     style={{backgroundColor:'powderblue',height:100, width:80}} 
-                    onPress={() => navigation.navigate({name: 'Log Set', params: {id : item.key, name: item.label}, merge: true})}
+                    onPress={() => navigation.navigate({name: 'Log Set', params: {id : item.key, name: item.label, array: item.array, item: item}, merge: true})}
                 ><Text>Update</Text>
                 </TouchableOpacity>
       }
