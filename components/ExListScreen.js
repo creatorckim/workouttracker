@@ -182,7 +182,7 @@ function ExListScreen({navigation, route}) {
                         <TouchableOpacity key={exercise.id} style={styles.exerciseContainer} 
                             onPress={() => {
                                 if (route.params.toAdd) {
-                                    navigation.navigate({name: 'Routine', params: { name: exercise.name },merge: true,});
+                                    navigation.navigate({name: 'Routine', params: { name: exercise.name },merge: true});
                                 } else {
                                     setExerciseId(exercise.id);
                                     setExerciseName(exercise.name);
