@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase('exercise-db');
@@ -8,7 +8,6 @@ function NoteScreen({navigation}) {
 
     const [note, setNote] = useState('');
     const [id, setId] = useState(1);
-    // const [notes, setNotes] = useState([]);
 
     useEffect(() => {
         db.transaction((tx) => {
@@ -16,7 +15,6 @@ function NoteScreen({navigation}) {
                 "create table if not exists notes (id integer primary key not null, note text);"
             );
             tx.executeSql("select * from notes", [], (_, { rows: { _array } }) => {
-                // console.log(_array)
                 if (_array.length != 0) {
                     setNote(_array[0].note);
                     setId(_array[0].id);
@@ -24,37 +22,25 @@ function NoteScreen({navigation}) {
             });
         });
 
-        // return () => {
-        //     console.log("note: ", note);
-        //     updateNote(id, note);
-        //     console.log("note: ", note);
-        //     // db.transaction((tx) => {
-        //     //     tx.executeSql("update notes set note = ? where id = 1", [note]);
-        //     // });
-        //     // console.log(id)
-        //     // if (id == 0) {
-        //     //     addToDB(note);
-        //     // } else {
-        //     //     // console.log('dffj')
-        //     //     updateNote(id, note);
-        //     // }
-        // }
     }, []);
 
     const updateNote = (id, note) => {
         db.transaction((tx) => {
             tx.executeSql("replace into notes (id, note) values (?, ?)", [id, note]);
-            // tx.executeSql("update notes set note = ? where id = ?", [note, id]);
         });
     }
 
     return (
-        <View>
-            <TextInput multiline style={styles.container} value={note} placeholder='Note' onChangeText={setNote} />
-            <TouchableOpacity onPress={() => {
-                updateNote(id, note);
-                navigation.goBack();
-            }}><Text>Save</Text></TouchableOpacity>
+        <View style={styles.container}>
+            <ScrollView style={{width: '100%'}}>
+                <TextInput multiline style={styles.textinput} value={note} placeholder='Note' onChangeText={setNote} />
+            </ScrollView>
+            <View style={styles.actionBarContainer}>
+                <TouchableOpacity style={styles.button} onPress={() => {
+                    updateNote(id, note);
+                    navigation.goBack();
+                }}><Text style={styles.buttonText}>Save</Text></TouchableOpacity>
+            </View>
         </View>
 
     );
@@ -63,221 +49,55 @@ function NoteScreen({navigation}) {
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        height: '80%',
+        height: '100%',
+        backgroundColor: '#1e1e1e',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    saveBtn: {
+        width: '90%',
+        height: '8%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fc4d32',
+        borderRadius: 5,
+        marginBottom: 25,
+    },
+    btnText: {
+        color:  '#1e1e1e',
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    textinput: {
+        width: '100%',
+        height: '92%',
         textAlignVertical: 'top',
-        fontSize: 30,
-    }
+        fontSize: 15,
+        padding: 20,
+        color: '#fff',
+    },
+    actionBarContainer: {
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    button: {
+        height: '100%',
+        width: '90%',
+        backgroundColor: '#fc4d32',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+        borderRadius: 5,
+    },
+    buttonText: {
+          color: '#1e1e1e',
+          fontSize: 20,
+          fontWeight: 'bold',
+    },
 });
 
 export default NoteScreen;
-
-
-
-
-
-
-
-// import React, { useEffect, useState } from 'react';
-// import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-// import * as SQLite from 'expo-sqlite';
-
-// const db = SQLite.openDatabase('exercise-db');
-
-// function NoteScreen() {
-
-//     const [note, setNote] = useState('');
-//     const [id, setId] = useState(1);
-//     // const [notes, setNotes] = useState([]);
-
-//     useEffect(() => {
-//         db.transaction((tx) => {
-//             tx.executeSql(
-//                 "create table if not exists notes (id integer primary key not null, note text);"
-//             );
-//             // tx.executeSql("replace into notes (id, note) values (?, ?)", [id, note]);
-//             tx.executeSql("select * from notes", [], (_, { rows: { _array } }) => {
-//                 console.log(_array);
-//                 if (_array.length != 0) {
-//                     setNote(_array[0].note);
-//                     setId(_array[0].id);
-//                 }
-//             });
-//             tx.executeSql("replace into notes (id, note) values (?, ?)", [id, note]);
-//         });
-
-//         return () => {
-//             console.log("note: ", note);
-//             updateNote(id, note);
-//             console.log("note: ", note);
-//             // db.transaction((tx) => {
-//             //     tx.executeSql("update notes set note = ? where id = 1", [note]);
-//             // });
-//             // console.log(id)
-//             // if (id == 0) {
-//             //     addToDB(note);
-//             // } else {
-//             //     // console.log('dffj')
-//             //     updateNote(id, note);
-//             // }
-//         }
-//       }, []);
-
-//     const addToDB = (note) => {
-
-//         db.transaction((tx) => {
-//             tx.executeSql("insert into notes (note) values (?)", [note]);
-//         });
-
-//     };
-
-//     const updateNote = (id, note) => {
-//         // console.log("id: ", id);
-//         db.transaction((tx) => {
-//             tx.executeSql("update notes set note = ? where id = ?", [note, id]);
-//         });
-//     }
-
-//     return (
-//         <View>
-//             <TextInput multiline style={styles.container} value={note} placeholder='Note' onChangeText={setNote} />
-//             <TouchableOpacity onPress={() => {
-//                 // updateNote(id, note);
-//                 if (id == 0) {
-//                     addToDB(note);
-//                 } else {
-//                     updateNote(id, note);
-//                 }
-//             }}><Text>add</Text></TouchableOpacity> 
-//         </View>
-
-//     );
-// }
-
-// const styles = StyleSheet.create({
-//     container: {
-//         width: '100%',
-//         height: '50%',
-//         textAlignVertical: 'top',
-//         fontSize: 30,
-//     }
-// });
-
-// export default NoteScreen;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useEffect, useState } from 'react';
-// import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-// import * as SQLite from 'expo-sqlite';
-
-// const db = SQLite.openDatabase('exercise-db');
-
-// function NoteScreen() {
-
-//     const [note, setNote] = useState('');
-//     const [id, setId] = useState(1);
-//     // const [notes, setNotes] = useState([]);
-
-//     useEffect(() => {
-//         db.transaction((tx) => {
-//             tx.executeSql(
-//                 "create table if not exists notes (id integer primary key not null, note text);"
-//             );
-//             // tx.executeSql("replace into notes (id, note) values (?, ?)", [id, note]);
-//             tx.executeSql("select * from notes", [], (_, { rows: { _array } }) => {
-//                 console.log(_array);
-//                 // let temp = [];
-//                 // for (let i = 0; i < _array.length; ++i) {
-//                 //     temp.push(_array[i]);
-//                 // }
-//                 // setNotes(temp);
-//                 if (_array.length != 0) {
-//                     setNote(_array[0].note);
-//                     // setId(_array[0].id);
-//                 }
-//             });
-//             tx.executeSql("replace into notes (id, note) values (?, ?)", [id, note]);
-//             // tx.executeSql("select * from notes", [], (_, { rows: { _array } }) => {
-//             //     // setNotes(_array);
-//             //     setNote(_array[0].note);
-//             //     setId(_array[0].id);
-//             //     // console.log(_array[0].note);
-//             // });
-//         });
-
-//         // return () => {
-//         //     console.log("note: ", note);
-//         //     // updateNote(id, note);
-//         //     // db.transaction((tx) => {
-//         //     //     tx.executeSql("update notes set note = ? where id = 1", [note]);
-//         //     // });
-//         //     // console.log(id)
-//         //     // if (id == 0) {
-//         //     //     addToDB(note);
-//         //     // } else {
-//         //     //     // console.log('dffj')
-//         //     //     updateNote(id, note);
-//         //     // }
-//         // }
-//       }, []);
-
-//     //   useEffect(() => {
-//     //     addToDB(note);
-//     //   }, setNote);
-
-//     // const addToDB = (note) => {
-
-//     //     db.transaction((tx) => {
-//     //         tx.executeSql("insert into notes (note) values (?)", [note]);
-//     //     });
-
-//     // };
-
-//     const updateNote = (id, note) => {
-//         // console.log("id: ", id);
-//         db.transaction((tx) => {
-//             tx.executeSql("update notes set note = ? where id = ?", [note, id]);
-//         });
-//     }
-
-//     return (
-//         <View>
-//             <TextInput multiline style={styles.container} value={note} placeholder='Note' onChangeText={setNote} />
-//             <TouchableOpacity onPress={() => {
-//                 updateNote(id, note);
-//                 // if (id == 0) {
-//                 //     addToDB(note);
-//                 // } else {
-//                 //     updateNote(id, note);
-//                 // }
-//             }}><Text>add</Text></TouchableOpacity> 
-//         </View>
-
-//     );
-// }
-
-// const styles = StyleSheet.create({
-//     container: {
-//         width: '100%',
-//         height: '50%',
-//         textAlignVertical: 'top',
-//         fontSize: 30,
-//     }
-// });
-
-// export default NoteScreen;

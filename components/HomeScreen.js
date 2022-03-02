@@ -4,6 +4,8 @@ import CalendarStrip from 'react-native-calendar-strip';
 import DraggableFlatList, { ScaleDecorator } from "react-native-draggable-flatlist";
 import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
 import * as SQLite from 'expo-sqlite';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
 const db = SQLite.openDatabase('exercise-db');
 
@@ -28,11 +30,7 @@ function HomeScreen({navigation, route}) {
 
     useEffect(() => {
         if (route.params?.name) {
-        // console.log(route.params?.name)
 
-    
-        //   console.log(route.params?.name);
-        //   addToRoutineArray(route.params?.name, route.params?.id);
         addRoutine(route.params?.name, selectedDate, [[0,0], [0,0], [0,0]]);
     
         }
@@ -44,23 +42,6 @@ function HomeScreen({navigation, route}) {
         }
 
     }, [route.params?.setArray]);
-
-    // useEffect(() => {
-    //     // console.log(route.params?.id)
-    //     if (route.params?.id) {
-    //         deleteExercise(route.params?.id);
-        
-    //         }
-    // }, [route.params?.id]);
-
-
-    //   const initialData = routine.map((exercise) => {
-    //     return {
-    //       key: exercise.id,
-    //       label: exercise.name,
-    //     };
-    //   });
-
 
     const getRoutine = ((date) => {
         db.transaction((tx) => {
@@ -211,105 +192,171 @@ function HomeScreen({navigation, route}) {
         return newArray;
     }
 
-    // const addToRoutineArray = (exercise) => {
-    //     let tempArray = [...routine, exercise];
-    //     setRoutine(tempArray);
-    // }
-
-    // const renderItem = ({ item, drag, isActive }) => {
-    //     return (
-    //       <ScaleDecorator>
-    //         <TouchableOpacity
-    //             onPress={() => navigation.navigate({name: 'Log Set', params: {id : item.key, name: item.label}, merge: true})}
-    //             onLongPress={drag}
-    //             disabled={isActive}
-    //             style={[
-    //                 styles.rowItem,
-    //                 { backgroundColor: isActive ? "red" : "blue" },
-    //             ]}
-    //         >
-    //           <Text style={styles.text}>{item.label}</Text>
-    //         </TouchableOpacity>
-    //       </ScaleDecorator>
-    //     );
-    //   };
-
     const rightAction = (item) => {
         return <TouchableOpacity 
-                    style={{backgroundColor:'powderblue',height:100, width:80}} 
+                    style={styles.rightAction} 
                     onPress={() => deleteExercise(item.key)}
-                ><Text>delete</Text>
+                ><Text><AntDesign name="delete" size={30} color="#1e1e1e" /></Text>
                 </TouchableOpacity>
       }
-      const leftAction = (item) => {
-        return <TouchableOpacity 
-                    style={{backgroundColor:'powderblue',height:100, width:80}} 
-                    onPress={() => navigation.navigate({name: 'Log Set', params: {id : item.key, name: item.label, array: item.array, item: item}, merge: true})}
-                ><Text>Update</Text>
-                </TouchableOpacity>
-      }
+    //   const leftAction = (item) => {
+    //     return <TouchableOpacity 
+    //                 style={{backgroundColor:'powderblue',height:100, width:80}} 
+    //                 onPress={() => navigation.navigate({name: 'Log Set', params: {id : item.key, name: item.label, array: item.array, item: item}, merge: true})}
+    //             ><Text>Update</Text>
+    //             </TouchableOpacity>
+    //   }
     
 
     return (
-        <GestureHandlerRootView>
-            <CalendarStrip
-                onDateSelected={day => {
-                    setSelectedDate(day.toISOString().slice(0, 10));
-                    getRoutine(day.toISOString().slice(0, 10));
-                }}
-                daySelectionAnimation={{type: 'border', duration: 200, borderWidth: 1, borderHighlightColor: 'black'}}
-                style={{height:150, paddingTop: 20, paddingBottom: 10}}
-            />
-            <Text>{selectedDate}</Text>
+        <GestureHandlerRootView style={styles.container}>
             
-            <TouchableOpacity onPress={() => {navigation.navigate({name: 'Exercise List', params: {toAdd : true}, merge: true})}}><Text>Add an exercise</Text></TouchableOpacity>
+            <View style={styles.calendarContainer}>
+                <CalendarStrip
+                    scrollable
+                    selectedDate={isoDateTime}
+                    onDateSelected={day => {
+                        setSelectedDate(day.toISOString().slice(0, 10));
+                        getRoutine(day.toISOString().slice(0, 10));
+                    }}
+                    daySelectionAnimation={{type: 'border', duration: 200, borderWidth: 1, borderHighlightColor: '#fc4d32'}}
+                    style={{height:100, width: '90%'}}
+                    calendarHeaderStyle={{color: '#fff', fontSize: 20}}
+                    dateNameStyle={{color: '#fff'}}
+                    dateNumberStyle={{color: '#fff'}}
+                    highlightDateNameStyle={{color: '#fc4d32'}}
+                    highlightDateNumberStyle={{color: '#fc4d32'}}
+                    leftSelector={[]}
+                    rightSelector={[]}
+                />
+            </View>
+            
+            <TouchableOpacity style={styles.addExerciseBtn} onPress={() => {navigation.navigate({name: 'Exercise List', params: {toAdd : true}, merge: true})}}>
+                <FontAwesome5 name="plus-circle" size={20} color="#fc4d32" />
+                <Text style={styles.addExerciseBtnText}>Add an exercise</Text>
+            </TouchableOpacity>
 
             <DraggableFlatList
+                // ListHeaderComponent={
+                //     <View>
+                //         <View style={styles.calendarContainer}>
+                //             <CalendarStrip
+                //                 scrollable
+                //                 selectedDate={isoDateTime}
+                //                 onDateSelected={day => {
+                //                     setSelectedDate(day.toISOString().slice(0, 10));
+                //                     getRoutine(day.toISOString().slice(0, 10));
+                //                 }}
+                //                 daySelectionAnimation={{type: 'border', duration: 200, borderWidth: 1, borderHighlightColor: '#fc4d32'}}
+                //                 style={{height:100, width: '90%'}}
+                //                 calendarHeaderStyle={{color: '#fff', fontSize: 20}}
+                //                 dateNameStyle={{color: '#fff'}}
+                //                 dateNumberStyle={{color: '#fff'}}
+                //                 highlightDateNameStyle={{color: '#fc4d32'}}
+                //                 highlightDateNumberStyle={{color: '#fc4d32'}}
+                //                 leftSelector={[]}
+                //                 rightSelector={[]}
+                //             />
+                //         </View>
+                        
+                //         <TouchableOpacity style={styles.addExerciseBtn} onPress={() => {navigation.navigate({name: 'Exercise List', params: {toAdd : true}, merge: true})}}>
+                //             <FontAwesome5 name="plus-circle" size={20} color="#fc4d32" />
+                //             <Text style={styles.addExerciseBtnText}>Add an exercise</Text>
+                //         </TouchableOpacity>
+                //     </View>
+                // }
+                style={styles.routineContainer}
                 data={routine}
                 onDragEnd={({ data }) => setRoutine(data)}
                 keyExtractor={(item) => item.key}
                 // renderItem={renderItem}
                 renderItem={({ item, drag, isActive }) => {
-                        return (
-                            <ScaleDecorator>
-                                <Swipeable
-                                    renderRightActions={() =>rightAction(item)}
-                                    renderLeftActions={() => leftAction(item)}
+                    return (
+                        <ScaleDecorator>
+                            <Swipeable
+                                disableLeftSwipe
+                                renderRightActions={() =>rightAction(item)}
+                                // renderLeftActions={() => leftAction(item)}
+                            >
+                                <TouchableHighlight
+                                    onPress={() => navigation.navigate({name: 'Log Set', params: {id : item.key, name: item.label, array: item.array, item: item}, merge: true})}
+                                    // onPress={() => navigation.navigate({name: 'Log Set', params: {id : item.key, name: item.label}, merge: true})}
+                                    onLongPress={drag}
+                                    disabled={isActive}
+                                    style={[
+                                        styles.rowItem,
+                                        { backgroundColor: isActive ? '#fc4d32' : '#1e1e1e' },
+                                    ]}
                                 >
-                                    <TouchableHighlight
-                                        // onPress={() => navigation.navigate({name: 'Log Set', params: {id : item.key, name: item.label}, merge: true})}
-                                        onLongPress={drag}
-                                        disabled={isActive}
-                                        style={[
-                                            styles.rowItem,
-                                            { backgroundColor: isActive ? "red" : "blue" },
-                                        ]}
-                                    >
-                                    <Text style={styles.text}>{item.label}</Text>
-                                    </TouchableHighlight>
-                                </Swipeable>
-                            </ScaleDecorator>
-                        );
-                      }}
+                                    <View>
+                                        <Text style={styles.text}>{item.label}</Text>
+                                        <Text style={styles.text2}>{item.array.length} Sets</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            </Swipeable>
+                        </ScaleDecorator>
+                    );
+                }}
             />
-            
         </GestureHandlerRootView>
     );
 }
 
 const styles= StyleSheet.create({
-    rowItem: {
-        height: 100,
+    container: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#1e1e1e',
+    },
+    calendarContainer: {
+        marginVertical: 20,
         width: '100%',
         alignItems: "center",
         justifyContent: "center",
-      },
-      text: {
-        color: "white",
-        fontSize: 24,
+    },
+    addExerciseBtn: {
+        flexDirection: 'row',
+        backgroundColor: '#1e1e1e',
+        marginLeft: 20,
+        marginBottom: 20,
+        alignItems: "center",
+    },
+    addExerciseBtnText:{
+        color: '#fc4d32',
+        fontSize: 20,
+        paddingLeft: 10,
+    },
+    routineContainer: {
+        height: '70%',
+        // padding: 20,
+        // marginBottom: 550,
+    },
+    rightAction: {
+        backgroundColor:'#fc4d32',
+        height: 80, 
+        width: 80,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    rowItem: {
+        height: 80,
+        width: '100%',
+        // alignItems: "center",
+        justifyContent: "center",
+    },
+    text: {
+        color: "#fff",
+        fontSize: 18,
         fontWeight: "bold",
-        textAlign: "center",
-      },
+        paddingLeft: 40
+        // textAlign: "center",
+    },
+    text2: {
+        color: "#A1A1A1",
+        fontSize: 15,
+        paddingLeft: 40
+        // textAlign: "center",
+    },
 })
 
 export default HomeScreen;
