@@ -15,11 +15,7 @@ let isoDateTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).
 function HomeScreen({navigation, route}) {
 
     const [selectedDate, setSelectedDate] = useState(isoDateTime.toString());
-    const [selectedName, setSelectedName] = useState('');
-    const [selectedId, setSelectedId] = useState(0);
-    const [selectedSetArray, setSelectedSetArray] = useState([]);
     const [routine, setRoutine] = useState([]);
-    const [deleteModalVisible, setdeleteModalVisible] = useState(false);
 
     useEffect(() => {
 
@@ -49,7 +45,6 @@ function HomeScreen({navigation, route}) {
                 "create table if not exists routines (id integer primary key not null, name text, date text, setarray text);"
             );
             tx.executeSql("select * from routines where date = ?", [date], (_, { rows: { _array } }) => {
-                // console.log(_array)
                 let temp = [];
                 for (let i = 0; i < _array.length; ++i) {
                     let element = _array[i];
@@ -57,7 +52,6 @@ function HomeScreen({navigation, route}) {
                     element.setarray = convertedArray;
                     temp.push(element);
                 }
-                // console.log(temp)
 
                 let initialData = temp.map((exercise) => {
                     return {
@@ -72,20 +66,16 @@ function HomeScreen({navigation, route}) {
     })
 
     const addRoutine = (name, date, setarray) => {
-        // console.log(date)
-        // console.log('setArray ', setarray)
+
         let tempArray = convertArrayToString(setarray);
-        // console.log('temparray ', tempArray)
 
         db.transaction((tx) => {
             tx.executeSql("insert into routines (name, date, setarray) values (?, ?, ?)", [name, date, tempArray]);
             tx.executeSql("select * from routines where date = ?", [selectedDate], (_, { rows: { _array } }) => {
                 let temp = [];
-                // console.log('_array')
                 for (let i = 0; i < _array.length; ++i) {
                     let element = _array[i];
                     let convertedArray = convertStringToArray(element.setarray);
-                    // console.log(convertedArray)
                     element.setarray = convertedArray;
                     temp.push(element);
                 }
@@ -96,7 +86,6 @@ function HomeScreen({navigation, route}) {
                         array: exercise.setarray,
                     };
                 });
-                // console.log('initialData');
                 setRoutine(initialData);
             });
         });
@@ -122,7 +111,6 @@ function HomeScreen({navigation, route}) {
                         array: exercise.setarray,
                     };
                 });
-                // console.log(temp)
                 setRoutine(initialData);
             });
         });
@@ -133,7 +121,6 @@ function HomeScreen({navigation, route}) {
         db.transaction((tx) => {
             tx.executeSql("delete from routines where id = ?", [id]);
             tx.executeSql("select * from routines where date = ?", [selectedDate], (_, { rows: { _array } }) => {
-                // console.log(_array)
                 let temp = [];
                 for (let i = 0; i < _array.length; ++i) {
                     let element = _array[i];
@@ -148,7 +135,6 @@ function HomeScreen({navigation, route}) {
                         array: exercise.setarray,
                     };
                 });
-                // console.log(temp)
                 setRoutine(initialData);
             });
         });
@@ -168,12 +154,10 @@ function HomeScreen({navigation, route}) {
                 }
             }
             str = str + str2;
-            // str = str + array[i];
             if(i < array.length - 1){
                 str = str + strSeparator;
             }
         }
-        // console.log(str);
         return str;
     }
 
@@ -185,10 +169,8 @@ function HomeScreen({navigation, route}) {
         for (let i = 0; i < arr.length; i++) {
             let strsep = ",";
             let arr2 = arr[i].split(strsep);
-            // console.log(arr2)
             newArray.push(arr2);
         }
-        // console.log(newArray);
         return newArray;
     }
 
@@ -199,14 +181,6 @@ function HomeScreen({navigation, route}) {
                 ><Text><AntDesign name="delete" size={30} color="#1e1e1e" /></Text>
                 </TouchableOpacity>
       }
-    //   const leftAction = (item) => {
-    //     return <TouchableOpacity 
-    //                 style={{backgroundColor:'powderblue',height:100, width:80}} 
-    //                 onPress={() => navigation.navigate({name: 'Log Set', params: {id : item.key, name: item.label, array: item.array, item: item}, merge: true})}
-    //             ><Text>Update</Text>
-    //             </TouchableOpacity>
-    //   }
-    
 
     return (
         <GestureHandlerRootView style={styles.container}>
@@ -237,50 +211,19 @@ function HomeScreen({navigation, route}) {
             </TouchableOpacity>
 
             <DraggableFlatList
-                // ListHeaderComponent={
-                //     <View>
-                //         <View style={styles.calendarContainer}>
-                //             <CalendarStrip
-                //                 scrollable
-                //                 selectedDate={isoDateTime}
-                //                 onDateSelected={day => {
-                //                     setSelectedDate(day.toISOString().slice(0, 10));
-                //                     getRoutine(day.toISOString().slice(0, 10));
-                //                 }}
-                //                 daySelectionAnimation={{type: 'border', duration: 200, borderWidth: 1, borderHighlightColor: '#fc4d32'}}
-                //                 style={{height:100, width: '90%'}}
-                //                 calendarHeaderStyle={{color: '#fff', fontSize: 20}}
-                //                 dateNameStyle={{color: '#fff'}}
-                //                 dateNumberStyle={{color: '#fff'}}
-                //                 highlightDateNameStyle={{color: '#fc4d32'}}
-                //                 highlightDateNumberStyle={{color: '#fc4d32'}}
-                //                 leftSelector={[]}
-                //                 rightSelector={[]}
-                //             />
-                //         </View>
-                        
-                //         <TouchableOpacity style={styles.addExerciseBtn} onPress={() => {navigation.navigate({name: 'Exercise List', params: {toAdd : true}, merge: true})}}>
-                //             <FontAwesome5 name="plus-circle" size={20} color="#fc4d32" />
-                //             <Text style={styles.addExerciseBtnText}>Add an exercise</Text>
-                //         </TouchableOpacity>
-                //     </View>
-                // }
                 style={styles.routineContainer}
                 data={routine}
                 onDragEnd={({ data }) => setRoutine(data)}
                 keyExtractor={(item) => item.key}
-                // renderItem={renderItem}
                 renderItem={({ item, drag, isActive }) => {
                     return (
                         <ScaleDecorator>
                             <Swipeable
                                 disableLeftSwipe
                                 renderRightActions={() =>rightAction(item)}
-                                // renderLeftActions={() => leftAction(item)}
                             >
                                 <TouchableHighlight
                                     onPress={() => navigation.navigate({name: 'Log Set', params: {id : item.key, name: item.label, array: item.array, item: item}, merge: true})}
-                                    // onPress={() => navigation.navigate({name: 'Log Set', params: {id : item.key, name: item.label}, merge: true})}
                                     onLongPress={drag}
                                     disabled={isActive}
                                     style={[
@@ -328,8 +271,6 @@ const styles= StyleSheet.create({
     },
     routineContainer: {
         height: '70%',
-        // padding: 20,
-        // marginBottom: 550,
     },
     rightAction: {
         backgroundColor:'#fc4d32',
@@ -341,7 +282,6 @@ const styles= StyleSheet.create({
     rowItem: {
         height: 80,
         width: '100%',
-        // alignItems: "center",
         justifyContent: "center",
     },
     text: {
@@ -349,13 +289,11 @@ const styles= StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
         paddingLeft: 40
-        // textAlign: "center",
     },
     text2: {
         color: "#A1A1A1",
         fontSize: 15,
         paddingLeft: 40
-        // textAlign: "center",
     },
 })
 

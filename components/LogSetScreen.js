@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, StyleSheet, TextInput } from 'react-native';
+import { Text, View, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import DraggableFlatList, { ScaleDecorator } from "react-native-draggable-flatlist";
 import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
 import { AntDesign } from '@expo/vector-icons';
@@ -12,7 +12,6 @@ function LogSetScreen({navigation, route}) {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        // console.log(route.params.array);
 
         setSetArray(route.params.array);
 
@@ -21,14 +20,12 @@ function LogSetScreen({navigation, route}) {
     const addSet = () => {
         let tempArray = [...setArray, ...[['0', '0']]];
         setSetArray(tempArray);
-        // console.log(tempArray)
     }
 
     const deleteSet = (index) => {
         let tempArray = [...setArray];
         tempArray.splice(index, 1);
         setSetArray(tempArray);
-        // console.log(tempArray)
     }
 
     const updateRep = (index, value) => {
@@ -62,28 +59,6 @@ function LogSetScreen({navigation, route}) {
 
     return (
         <GestureHandlerRootView style={styles.container}>
-            {/* <Text>{route.params.id}</Text> */}
-            {/* <Text style={styles.titleName}>{route.params.name}</Text> */}
-            {/* {setArray.map((set, index) => {
-                console.log(set);
-                    <View key={index} style={styles.setContainer}><Text>1sfthrhd</Text></View>
-                })} */}
-            {/* <View style={styles.setBtnContainer}>
-                <TouchableOpacity style={styles.setBtn} onPress={() => addSet()}>
-                    <Text>Add A Set</Text>
-                </TouchableOpacity> */}
-                {/* <TouchableOpacity style={styles.setBtn} onPress={() => deleteSet()}>
-                    <Text>Delete A Set</Text>
-                </TouchableOpacity> */}
-            {/* </View> */}
-            {/* <View>
-                <TouchableOpacity 
-                    style={styles.addSetBtn}
-                    onPress={() => addSet()}>
-                    <FontAwesome5 name="plus-circle" size={20} color="#fc4d32" />
-                    <Text style={styles.addSetBtnText}>Add a set</Text>
-                </TouchableOpacity>
-            </View> */}
             <DraggableFlatList
                 ListHeaderComponent={
                     <View>
@@ -108,60 +83,29 @@ function LogSetScreen({navigation, route}) {
                             <Swipeable
                                 disableLeftSwipe
                                 renderRightActions={() =>rightAction(item)}
-                                // renderLeftActions={() => leftAction(item)}
                             >
                                 <TouchableOpacity
-                                // onLongPress={drag}
                                 disabled={isActive}
                                 style={[
-                                    // styles.rowItem,
                                     { backgroundColor: isActive ? "red" : item.backgroundColor },
                                 ]}
                                 >
-                                    <View style={styles.textInputContainer}>
-                                        <Text style={styles.index}>{item.key + 1}</Text>
-                                        <TextInput style={styles.textInput} value={setArray[item.key][0]} selectTextOnFocus keyboardType='numeric' placeholder='0' onChangeText={(value) => updateRep(item.key, value)}/>
-                                        <Text style={styles.text}>REPS</Text>
-                                        <Text style={styles.text}>/</Text>
-                                        <TextInput style={styles.textInput} value={setArray[item.key][1]} selectTextOnFocus keyboardType='numeric' placeholder='0' onChangeText={(value) => updateWeight(item.key, value)}/>
-                                        <Text style={styles.text}>LBS</Text>    
+                                    <View style={{width: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                                        <View style={styles.textInputContainer}>
+                                            <Text style={styles.index}>{item.key + 1}</Text>
+                                            <TextInput style={styles.textInput} value={setArray[item.key][0]} selectTextOnFocus keyboardType='numeric' placeholder='0' onChangeText={(value) => updateRep(item.key, value)}/>
+                                            <Text style={styles.text}>REPS</Text>
+                                            <Text style={styles.text}>/</Text>
+                                            <TextInput style={styles.textInput} value={setArray[item.key][1]} selectTextOnFocus keyboardType='numeric' placeholder='0' onChangeText={(value) => updateWeight(item.key, value)}/>
+                                            <Text style={styles.text}>LBS</Text>    
+                                        </View>
                                     </View>
-                                {/* <View style={styles.textInputContainer}>
-                                    <View style={{flexDirection: 'row'}}>
-                                        <TextInput style={styles.textInput} value={setArray[item.key][0]} selectTextOnFocus keyboardType='numeric' placeholder='0' onChangeText={(value) => updateRep(item.key, value)}/>
-                                        <Text style={styles.text}>REPS</Text>
-                                    </View>
-                                    <Text style={styles.text}>/</Text>
-                                    <View style={{flexDirection: 'row'}}>
-                                        <TextInput style={styles.textInput} value={setArray[item.key][1]} selectTextOnFocus keyboardType='numeric' placeholder='0' onChangeText={(value) => updateWeight(item.key, value)}/>
-                                        <Text  style={styles.text}>LBS</Text>    
-                                    </View>
-                                </View> */}
                                 </TouchableOpacity>
                             </Swipeable>
                         </ScaleDecorator>
                     )
                 }}
-            />
-            {/* <ScrollView style={styles.scrollview}>
-                {setArray.map((set, index) => 
-                    <View key={index} style={styles.setContainer}>
-                        <Text>Reps: </Text>
-                        <TextInput value={set[0]} selectTextOnFocus keyboardType='numeric' placeholder='0' onChangeText={(value) => updateRep(index, value)}/>
-                        <Text>Weight: </Text>
-                        <TextInput value={set[1]} selectTextOnFocus keyboardType='numeric' placeholder='0' onChangeText={(value) => updateWeight(index, value)}/>
-                    </View>
-                )}
-            </ScrollView> */}
-            {/* {setArray.length != 0 ? 
-                <ScrollView style={styles.scrollview}>
-                    {setArray.map((set, index) => {
-                        console.log(set);
-                        <Text key={index}>{set}</Text>
-                    })}
-                </ScrollView> : <Text>No Exercises</Text>
-            } */}
-            
+            />       
             
             <View style={styles.actionBarContainer}>
                 <TouchableOpacity
@@ -247,7 +191,7 @@ const styles = StyleSheet.create({
           fontWeight: 'bold',
     },
     textInputContainer: {
-        width: '100%',
+        width: '90%',
         height: 80,
         flexDirection: 'row',
         justifyContent: 'space-evenly',
@@ -273,8 +217,6 @@ const styles = StyleSheet.create({
         width: 50,
         fontSize: 20,
         color: '#fff',
-        // borderBottomWidth: 1,
-        // borderBottomColor: '#fff',
         textAlign: 'center',
     },
     rightAction: {

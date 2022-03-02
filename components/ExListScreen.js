@@ -16,10 +16,8 @@ let equipmentArray = ['All', 'Barbell', 'Dumbbells', 'Machine', 'Bands', 'Pullup
 function ExListScreen({navigation, route}) {
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [deleteModalVisible, setdeleteModalVisible] = useState(false);
     const [modalMuscleFilterVisible, setModalMuscleFilterVisible] = useState(false);
     const [modalEquipFilterVisible, setModalEquipFilterVisible] = useState(false);
-    const [updating, setUpdating] = useState(false);
     const [exerciseId, setExerciseId] = useState(0);
     const [exerciseName, setExerciseName] = useState('');
     const [muscleName, setMuscleName] = useState('');
@@ -29,10 +27,7 @@ function ExListScreen({navigation, route}) {
     const [equipmentFilter, setEquipmentFilter] = useState('All');
 
     useEffect(() => {
-        // db.transaction(transaction => {
-        //     transaction.executeSql(`
-        //       DROP TABLE exercises;`);
-        // });
+
         db.transaction((tx) => {
             tx.executeSql(
                 "create table if not exists exercises (id integer primary key not null, name text, muscle text, equipment text);"
@@ -42,7 +37,6 @@ function ExListScreen({navigation, route}) {
                 for (let i = 0; i < _array.length; ++i) {
                     temp.push(_array[i]);
                 }
-                // console.log(temp)
                 let initialData = temp.map((exercise) => {
                     return {
                         key: exercise.id,
@@ -52,8 +46,6 @@ function ExListScreen({navigation, route}) {
                     };
                 });
                 setExerciseList(initialData);
-                // setExerciseList(res.rows._array);
-                // console.log(temp)
             });
         });
       }, []);
@@ -160,8 +152,6 @@ function ExListScreen({navigation, route}) {
         }
 
         setExerciseId(0);
-        // setMuscleName('');
-        // setEquipmentName('');
 
     }
 
@@ -170,7 +160,6 @@ function ExListScreen({navigation, route}) {
             tx.executeSql("update exercises set name = ? where id = ?", [name, id]);
             tx.executeSql("update exercises set muscle = ? where id = ?", [muscle, id]);
             tx.executeSql("update exercises set equipment = ? where id = ?", [equipment, id]);
-            // tx.executeSql("update exercises set name = ? and muscle = ? and equipment = ? where id = ?", [name, muscle, equipment, id]);
             tx.executeSql("select * from exercises", [], (_, { rows: { _array } }) => {
                 let temp = [];
                 for (let i = 0; i < _array.length; ++i) {
@@ -243,42 +232,7 @@ function ExListScreen({navigation, route}) {
                                 <TouchableOpacity onPress={() => setModalEquipFilterVisible(true)} style={styles.filterBtn}><Text style={styles.filterText}>{equipmentFilter}</Text></TouchableOpacity>
                             </View>
                         </View>
-
-                        {/* <Picker selectedValue={muscleFilter} onValueChange={(itemValue, itemIndex) => setMuscleFilter(itemValue)}>
-                            <Picker.Item label='All' value='All' />
-                            <Picker.Item label='Trapezius' value='Trapezius'/>
-                            <Picker.Item label='Latissimus Dorsi' value='Latissimus Dorsi'/>
-                            <Picker.Item label='Bicep' value='Bicep'/>
-                            <Picker.Item label='Forearms' value='Forearms'/>
-                            <Picker.Item label='Upper Chest' value='Upper Chest'/>
-                            <Picker.Item label='Chest' value='Chest'/>
-                            <Picker.Item label='Tricep' value='Tricep'/>
-                            <Picker.Item label='Anterior Deltoid' value='Anterior Deltoid'/>
-                            <Picker.Item label='Lateral Deltoid' value='Lateral Deltoid'/>
-                            <Picker.Item label='Posterior Deltoid' value='Posterior Deltoid'/>
-                            <Picker.Item label='Quadricep' value='Quadricep'/>
-                            <Picker.Item label='Abductor' value='Abductor'/>
-                            <Picker.Item label='Adductor' value='Adductor'/>
-                            <Picker.Item label='Hamstring' value='Hamstring'/>
-                            <Picker.Item label='Glute' value='Glute'/>
-                            <Picker.Item label='Calf' value='Calf'/>
-                            <Picker.Item label='Erector Spinae' value='Erector Spinae'/>
-                            <Picker.Item label='Oblique' value='Oblique'/>
-                            <Picker.Item label='Rectus Abdominis (Spinal Flexion)' value='Rectus Abdominis (Spinal Flexion)'/>
-                            <Picker.Item label='Rectus Abdominis (Hip Flexion)' value='Rectus Abdominis (Hip Flexion)'/>
-                            <Picker.Item label='Heart' value='Heart'/>
-                        </Picker>
-                        <Picker selectedValue={equipmentFilter} onValueChange={(itemValue, itemIndex) => setEquipmentFilter(itemValue)}>
-                            <Picker.Item label='All' value="All" />
-                            <Picker.Item label='Dumbbells' value='Dumbbells'/>
-                            <Picker.Item label='Barbell' value='Barbell'/>
-                            <Picker.Item label='Machine' value='Machine'/>
-                            <Picker.Item label='Bands' value='Bands'/>
-                            <Picker.Item label='Pullup Bar' value='Pullup Bar'/>
-                        </Picker>
-                        <TouchableOpacity onPress={() => filterDB(muscleFilter, equipmentFilter)}>
-                            <Text>Filter</Text>
-                        </TouchableOpacity> */}
+            
                         <View>
                             <TouchableOpacity 
                                 style={styles.addExerciseBtn}
@@ -299,14 +253,12 @@ function ExListScreen({navigation, route}) {
                 data={exerciseList}
                 onDragEnd={({ data }) => setExerciseList(data)}
                 keyExtractor={(item) => item.key}
-                // renderItem={renderItem}
                 renderItem={({ item, drag, isActive }) => {
                     return (
                         <ScaleDecorator>
                             <Swipeable
                                 disableLeftSwipe
                                 renderRightActions={() =>rightAction(item)}
-                                // renderLeftActions={() => leftAction(item)}
                             >
                                 <TouchableHighlight
                                     onPress={() => {
@@ -321,8 +273,6 @@ function ExListScreen({navigation, route}) {
                                         }
                                         
                                     }} 
-                                    // onPress={() => navigation.navigate({name: 'Log Set', params: {id : item.key, name: item.label, array: item.array, item: item}, merge: true})}
-                                    // onPress={() => navigation.navigate({name: 'Log Set', params: {id : item.key, name: item.label}, merge: true})}
                                     onLongPress={drag}
                                     disabled={isActive}
                                     style={[
@@ -341,47 +291,6 @@ function ExListScreen({navigation, route}) {
                     );
                 }}
             />
-            {/* {exerciseList.length != 0 ? 
-                <ScrollView style={styles.listContainer}>
-                    {exerciseList.map((exercise) =>
-                        <TouchableOpacity key={exercise.id} style={styles.exerciseContainer} 
-                            onPress={() => {
-                                if (route.params.toAdd) {
-                                    navigation.navigate({name: 'Routine', params: { name: exercise.name },merge: true});
-                                } else {
-                                    setExerciseId(exercise.id);
-                                    setExerciseName(exercise.name);
-                                    setMuscleName(exercise.muscle);
-                                    setEquipmentName(exercise.equipment);
-                                    setModalVisible(true);
-                                }
-                                
-                            }} 
-                            onLongPress={() => {
-                                setExerciseId(exercise.id); 
-                                setdeleteModalVisible(true);
-                            }}>
-                            <Text>{exercise.name}</Text>
-                            <Text>Muscle: {exercise.muscle}</Text>
-                            <Text>Equipment: {exercise.equipment}</Text>
-                        </TouchableOpacity>
-                    )}
-                </ScrollView> : <Text>No Exercises</Text>
-            } */}
-             {/* <View style={styles.actionBarContainer}>
-                <TouchableOpacity 
-                    onPress={() => {
-                        setExerciseId(0);
-                        setExerciseName('');
-                        setMuscleName('');
-                        setEquipmentName('');
-                        setModalVisible(true)
-                    }}>
-                    <View style={styles.addButtonContainer}>
-                    <Text style={styles.addButton}>+</Text>
-                    </View>
-                </TouchableOpacity>
-            </View> */}
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -392,7 +301,6 @@ function ExListScreen({navigation, route}) {
             >
                 <View style={styles.modalContainer}>
                     <View style={{height: '100%', width: '100%'}}>
-                        {/* <Text>Exercise Name: </Text> */}
                         <TextInput style={styles.nameInput} value={exerciseName} placeholder='Exercise Name' placeholderTextColor = "#A1A1A1" onChangeText={setExerciseName}/>
                         <Text style={styles.textInput}>Muscle Targeted: </Text>
                         <Picker style={{color: '#fc4d32', marginLeft: 45}} selectedValue={muscleName} onValueChange={(itemValue, itemIndex) => setMuscleName(itemValue)}>
@@ -428,17 +336,6 @@ function ExListScreen({navigation, route}) {
                             <Picker.Item style={styles.pickerItem} label='Bands' value='Bands'/>
                             <Picker.Item style={styles.pickerItem} label='Pullup Bar' value='Pullup Bar'/>
                         </Picker>
-                        {/* <TouchableOpacity 
-                            onPress={() => {
-                                if (exerciseId == 0) {
-                                    addToDB(exerciseName, muscleName, equipmentName); 
-                                } else {
-                                    updateExercise(exerciseId, exerciseName, muscleName, equipmentName);
-                                }
-                                setModalVisible(!modalVisible);
-                            }}>
-                            <Text>Save</Text>
-                        </TouchableOpacity> */}
                         <View style={styles.actionBarContainer}>
                             <TouchableOpacity
                             style={styles.button}
@@ -453,29 +350,9 @@ function ExListScreen({navigation, route}) {
                                 <Text style={styles.buttonText}>Save</Text>
                             </TouchableOpacity>
                         </View>
-                        {/* <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
-                            <Text>Cancel</Text>
-                        </TouchableOpacity> */}
                     </View>
                 </View>
             </Modal>
-            {/* <Modal
-                animationType="slide"
-                transparent={true}
-                visible={deleteModalVisible}
-                onRequestClose={() => {
-                    setdeleteModalVisible(!deleteModalVisible);
-                }}
-            >
-                <View style={styles.modalContainer}>
-                    <TouchableOpacity onPress={() => {deleteExercise(exerciseId); setdeleteModalVisible(!deleteModalVisible)}}>
-                        <Text>Delete</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setdeleteModalVisible(!deleteModalVisible)}>
-                        <Text>Cancel</Text>
-                    </TouchableOpacity>
-                </View>
-            </Modal> */}
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -495,35 +372,6 @@ function ExListScreen({navigation, route}) {
                             )
                         })}
                     </View>
-                {/* <TouchableOpacity onPress={() => {filterDB('All', equipmentFilter); setModalMuscleFilterVisible(!modalMuscleFilterVisible)}} style={styles.filterBtn}>
-                    <Text style={styles.filterText}>All</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => {filterDB('Trapezius', equipmentFilter); setModalMuscleFilterVisible(!modalMuscleFilterVisible)}} style={styles.filterBtn}>
-                    <Text style={styles.filterText}>Trapezius</Text>
-                </TouchableOpacity>
-                            <Picker.Item label='Latissimus Dorsi' value='Latissimus Dorsi'/>
-                            <Picker.Item label='Bicep' value='Bicep'/>
-                            <Picker.Item label='Forearms' value='Forearms'/>
-                            <Picker.Item label='Upper Chest' value='Upper Chest'/>
-                            <Picker.Item label='Chest' value='Chest'/>
-                            <Picker.Item label='Tricep' value='Tricep'/>
-                            <Picker.Item label='Anterior Deltoid' value='Anterior Deltoid'/>
-                            <Picker.Item label='Lateral Deltoid' value='Lateral Deltoid'/>
-                            <Picker.Item label='Posterior Deltoid' value='Posterior Deltoid'/>
-                            <Picker.Item label='Quadricep' value='Quadricep'/>
-                            <Picker.Item label='Abductor' value='Abductor'/>
-                            <Picker.Item label='Adductor' value='Adductor'/>
-                            <Picker.Item label='Hamstring' value='Hamstring'/>
-                            <Picker.Item label='Glute' value='Glute'/>
-                            <Picker.Item label='Calf' value='Calf'/>
-                            <Picker.Item label='Erector Spinae' value='Erector Spinae'/>
-                            <Picker.Item label='Oblique' value='Oblique'/>
-                            <Picker.Item label='Rectus Abdominis (Spinal Flexion)' value='Rectus Abdominis (Spinal Flexion)'/>
-                            <Picker.Item label='Rectus Abdominis (Hip Flexion)' value='Rectus Abdominis (Hip Flexion)'/>
-                            <Picker.Item label='Heart' value='Heart'/> */}
-                    {/* <TouchableOpacity onPress={() => setModalMuscleFilterVisible(!modalMuscleFilterVisible)}>
-                        <Text>Cancel</Text>
-                    </TouchableOpacity> */}
                 </ScrollView>
             </Modal>
             <Modal
@@ -560,7 +408,6 @@ const styles = StyleSheet.create({
     listContainer: {
         width: '100%',
         height: '100%',
-        // backgroundColor: '#af216e',
     },
     filterContainer: {
         flexDirection: 'row',
@@ -595,8 +442,6 @@ const styles = StyleSheet.create({
     },
     routineContainer: {
         height: '100%',
-        // padding: 20,
-        // marginBottom: 150,
     },
     rightAction: {
         backgroundColor:'#fc4d32',
@@ -615,20 +460,17 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
         paddingLeft: 40
-        // textAlign: "center",
     },
     text2: {
         color: "#A1A1A1",
         fontSize: 15,
         paddingLeft: 40
-        // textAlign: "center",
     },
     exerciseContainer: {
         width: '90%',
         height: 100,
         backgroundColor: '#fff',
         justifyContent: 'center',
-        // alignItems: 'center',
     },
     modalContainer: {
         width: '100%',
@@ -681,11 +523,9 @@ const styles = StyleSheet.create({
     },
     textInput: {
         width: '100%',
-        // height: 80,
         padding: 20,
         fontSize: 15,
         color: '#fff',
-        // marginVertical: 20,
     },
     pickerItem: {
         backgroundColor: '#1e1e1e',

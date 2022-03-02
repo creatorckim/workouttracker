@@ -70,11 +70,11 @@ const styles = StyleSheet.create({
     },
     textinput: {
         width: '100%',
-        height: '92%',
         textAlignVertical: 'top',
-        fontSize: 15,
+        fontSize: 17,
         padding: 20,
         color: '#fff',
+        marginBottom: 100,
     },
     actionBarContainer: {
         position: 'absolute',
